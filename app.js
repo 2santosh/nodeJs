@@ -62,6 +62,7 @@ app.post('/', (req, res) => {
 app.get('/view', (req, res) => {
   // Send the tasks array as JSON data
   res.status(200).json({ tasks });
+  // console.log('GET request ayo!');
 });
 
 const PORT = 3000;

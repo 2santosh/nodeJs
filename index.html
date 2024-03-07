@@ -21,6 +21,22 @@
         input[type=date] {
             width: 20%;
         }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 
@@ -67,10 +83,27 @@
     <section id="viewUsers">
         <div>
             <h3>List of users</h3>
-            <ul id="userList">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Gmail</th>
+                        <th>Task</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="userList">
+                    <tr>
+                        <td id="Name"></td>
+                        <td id="Gmail"></td>
+                        <td id="Task"></td>
+                        <td id="Date"></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-
     </section>
+
     <script>
         const form = document.querySelector("#form");
         const submitBtn = document.querySelector("#submitButton");
@@ -121,21 +154,58 @@
 
 
 
+
+        // viewBtn.addEventListener("click", (e) => {
+        //     e.preventDefault();
+        //     fetch('http://localhost:3000/view')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         userList.innerHTML = ''; // Clear previous data
+        //         data.tasks.forEach(task => {
+        //             const listItem = document.createElement('li');
+        //             listItem.textContent = `Name: ${task[0]}, Gmail: ${task[1]}, Task: ${task[2]}, Date: ${task[3]}`;
+        //             userList.appendChild(listItem);
+        //         });
+        //     })
+        //     .catch(error => {
+        //         console.error('Error fetching data:', error);
+        //     });
+        // });
+
         viewBtn.addEventListener("click", (e) => {
             e.preventDefault();
-            fetch('http://localhost:3000/view')
-            .then(response => response.json())
-            .then(data => {
-                userList.innerHTML = ''; // Clear previous data
-                data.tasks.forEach(task => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = `Name: ${task[0]}, Gmail: ${task[1]}, Task: ${task[2]}, Date: ${task[3]}`;
-                    userList.appendChild(listItem);
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
+            var xhr = new XMLHttpRequest(); // API JS IN BUILT // FETCH
+            xhr.open('get', 'http://localhost:3000/view', true);
+            xhr.setRequestHeader('content-Type', 'application/JSON');
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 400) {
+                    var response = JSON.parse(xhr.responseText);
+                    const userList = document.querySelector("#userList");
+                    var trows;
+                    console.log(userList.childElementCount.length > 1);
+                    if (userList.childNodes.length > 1) {
+                         trows.forEach((trow)=> {
+                            userList.removeChild(trow);
+                         })
+                        // console.log(userList.childElementCount);
+                        // console.log('is this running?');
+                    }
+                    else {
+                        response.tasks.forEach((task) => {
+
+                            const row = document.createElement('tr');
+                            row.innerHTML = `<td>${task[0]}</td><td>${task[1]}</td><td>${task[2]}</td><td>${task[3]}</td>`;
+                            userList.appendChild(row);
+                        });
+                        var trows = userList.querySelectorAll('tr');
+                        console.log(trows);
+
+                     }
+                } else {
+                    console.error('Error fetching data:', error);
+                }
+            }
+            xhr.send();
         });
     </script>
 </body>
